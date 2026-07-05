@@ -1,0 +1,2073 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kutko - Zabavna i interaktivna igra za učenje matematičkih kutova namijenjena djeci u osnovnoj školi.">
+  <title>Kutko - Nauči Kutove Kroz Igru! 📐</title>
+  <!-- Google Fonts - Fredoka (rounded, friendly font for children) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* CSS Variables for design tokens */
+    :root {
+      --font-family: 'Fredoka', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      
+      /* Vibrant kid-friendly pastel color palette */
+      --color-primary: #ff6b6b;        /* Coral Red */
+      --color-primary-hover: #ff5252;
+      --color-secondary: #4dadf7;      /* Sky Blue */
+      --color-accent: #51cf66;         /* Mint Green */
+      --color-warning: #fcc419;        /* Warm Gold */
+      --color-dark: #2b2d42;           /* Soft Dark Grey */
+      --color-light: #f8f9fa;          /* Warm White */
+      --color-bg-gradient: linear-gradient(135deg, #e7f5ff 0%, #f3f0ff 100%);
+      
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --card-border: 2px solid rgba(255, 255, 255, 0.8);
+      --card-shadow: 0 16px 32px rgba(103, 114, 229, 0.08), 0 4px 8px rgba(0, 0, 0, 0.02);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --transition-normal: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --transition-fast: all 0.15s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--color-bg-gradient);
+      color: var(--color-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* Accessibility focus styling */
+    button:focus-visible, input:focus-visible {
+      outline: 3px solid var(--color-secondary);
+      outline-offset: 2px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--color-dark);
+      text-shadow: 0 4px 0px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    h1 span.logo-emoji {
+      animation: wobble 2s infinite ease-in-out;
+      display: inline-block;
+    }
+
+    @keyframes wobble {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-8deg); }
+      75% { transform: rotate(8deg); }
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #6a6f8c;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    /* Settings Quick Panel */
+    .quick-settings {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      background: var(--card-bg);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: var(--card-border);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+      user-select: none;
+      transition: var(--transition-fast);
+    }
+
+    .toggle-container:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+    }
+
+    .toggle-checkbox {
+      display: none;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background-color: #ccd4e0;
+      border-radius: 12px;
+      transition: var(--transition-fast);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background-color: white;
+      top: 3px;
+      left: 3px;
+      transition: var(--transition-normal);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .toggle-checkbox:checked + .toggle-switch {
+      background-color: var(--color-accent);
+    }
+
+    .toggle-checkbox:checked + .toggle-switch::after {
+      left: 23px;
+    }
+
+    .toggle-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-dark);
+    }
+
+    /* Tabs Layout */
+    .tab-nav {
+      display: flex;
+      background: rgba(220, 225, 235, 0.5);
+      border-radius: var(--radius-md);
+      padding: 6px;
+      margin-bottom: 24px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: none;
+      padding: 12px 20px;
+      font-family: var(--font-family);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #6a6f8c;
+      cursor: pointer;
+      border-radius: calc(var(--radius-md) - 4px);
+      transition: var(--transition-normal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      background: var(--card-bg);
+      color: var(--color-dark);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+    }
+
+    /* Main Container layout */
+    main {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .panel {
+      display: none;
+      width: 100%;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .panel.active {
+      display: grid;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Glass Cards */
+    .card {
+      background: var(--card-bg);
+      border: var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .card-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--color-dark);
+      margin-bottom: 20px;
+      text-align: center;
+      align-self: flex-start;
+      border-bottom: 3px solid rgba(103, 114, 229, 0.15);
+      padding-bottom: 4px;
+      width: 100%;
+    }
+
+    /* SVG Protractor Visualizer Styling */
+    .visualizer-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 380px;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px 0;
+    }
+
+    /* Angle Value Overlay Bubble */
+    .angle-value-bubble {
+      position: absolute;
+      top: -15px;
+      background: var(--color-primary);
+      color: white;
+      padding: 6px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 1.4rem;
+      font-weight: 700;
+      box-shadow: 0 8px 16px rgba(255, 107, 107, 0.3);
+      z-index: 10;
+      animation: float 3s ease-in-out infinite;
+      border: 2px solid white;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    svg#protractor-svg-explore, svg#protractor-svg-quiz {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0px 8px 16px rgba(0, 0, 0, 0.04));
+      overflow: visible;
+    }
+
+    .protractor-base-circle {
+      fill: #f1f3f5;
+      stroke: #dee2e6;
+      stroke-width: 2;
+    }
+
+    /* Controls Panel Styling */
+    .controls-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+    }
+
+    /* Quick Preset Buttons */
+    .preset-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .preset-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #6a6f8c;
+    }
+
+    .preset-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .preset-btn {
+      font-family: var(--font-family);
+      border: none;
+      padding: 12px 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: var(--transition-normal);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .preset-btn:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+    }
+
+    .preset-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .preset-btn[data-angle="45"] { background-color: #ff9f43; } /* Orange */
+    .preset-btn[data-angle="90"] { background-color: #00d2d3; } /* Teal */
+    .preset-btn[data-angle="180"] { background-color: #5f27cd; } /* Purple */
+    .preset-btn[data-angle="360"] { background-color: #ff5252; } /* Red */
+
+    .preset-btn span.label-name {
+      font-size: 0.75rem;
+      font-weight: 500;
+      opacity: 0.95;
+    }
+
+    /* Manual Slider & Inputs */
+    .inputs-container {
+      background: var(--color-light);
+      padding: 16px;
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border: 1px solid #e9ecef;
+    }
+
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-dark);
+    }
+
+    .slider-input {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 12px;
+      border-radius: 6px;
+      background: #dee2e6;
+      outline: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      border: 3px solid white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: var(--transition-fast);
+    }
+
+    .slider-input::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: var(--color-primary-hover);
+    }
+
+    .number-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .number-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .number-input-wrapper {
+      display: flex;
+      align-items: center;
+      background: white;
+      border: 2px solid #ced4da;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+      transition: border-color var(--transition-fast);
+    }
+
+    .number-input-wrapper:focus-within {
+      border-color: var(--color-secondary);
+    }
+
+    .number-input {
+      width: 70px;
+      border: none;
+      text-align: center;
+      font-family: var(--font-family);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--color-dark);
+      padding: 6px;
+      outline: none;
+    }
+
+    /* Remove spinner arrows */
+    .number-input::-webkit-inner-spin-button,
+    .number-input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .number-btn {
+      background: #e9ecef;
+      border: none;
+      width: 32px;
+      height: 38px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--color-dark);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-fast);
+    }
+
+    .number-btn:hover {
+      background: #dee2e6;
+    }
+
+    .number-btn:active {
+      background: #ced4da;
+    }
+
+    /* Explanation & Education Card */
+    .info-card {
+      background: #eef2ff;
+      border: 1px solid rgba(103,114,229,0.15);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      text-align: left;
+    }
+
+    .info-badge {
+      align-self: flex-start;
+      background: var(--color-secondary);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-angle-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-dark);
+    }
+
+    .info-desc {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      color: #4a5568;
+    }
+
+    .info-example {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: white;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border-left: 4px solid var(--color-accent);
+      font-size: 0.95rem;
+    }
+
+    .info-example-icon {
+      font-size: 1.4rem;
+    }
+
+    /* Quiz Panel Specific Layout */
+    .quiz-layout {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 24px;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .quiz-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .quiz-card {
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 24px;
+    }
+
+    .quiz-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    /* Stars Scoreboard */
+    .stars-container {
+      display: flex;
+      gap: 6px;
+    }
+
+    .star-icon {
+      font-size: 1.8rem;
+      color: #dee2e6;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .star-icon.filled {
+      color: var(--color-warning);
+      transform: scale(1.1);
+      filter: drop-shadow(0px 2px 4px rgba(252, 196, 25, 0.3));
+    }
+
+    .quiz-progress-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #6a6f8c;
+    }
+
+    .quiz-question-box {
+      width: 100%;
+      background: #f8f9fa;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      border: 2px dashed #dee2e6;
+      margin-bottom: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .quiz-question-number {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--color-secondary);
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .quiz-question-text {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--color-dark);
+      line-height: 1.4;
+    }
+
+    .quiz-question-text strong {
+      color: var(--color-primary);
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    /* Action Buttons */
+    .primary-btn {
+      font-family: var(--font-family);
+      border: none;
+      background: var(--color-accent);
+      color: white;
+      padding: 14px 28px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      width: 100%;
+      transition: var(--transition-normal);
+      box-shadow: 0 8px 16px rgba(81, 207, 98, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 20px rgba(81, 207, 98, 0.4);
+      background-color: #40c057;
+    }
+
+    .primary-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .primary-btn:disabled {
+      background-color: #ced4da;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Multiple choice options */
+    .choice-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .choice-btn {
+      font-family: var(--font-family);
+      border: 2px solid #dee2e6;
+      background: white;
+      padding: 14px 20px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--color-dark);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    }
+
+    .choice-btn:hover {
+      border-color: var(--color-secondary);
+      background-color: #f1f9ff;
+      transform: translateX(4px);
+    }
+
+    .choice-btn.correct {
+      border-color: var(--color-accent);
+      background-color: #ebfbee;
+      color: #2b8a3e;
+      font-weight: 700;
+    }
+
+    .choice-btn.incorrect {
+      border-color: var(--color-primary);
+      background-color: #fff5f5;
+      color: #c92a2a;
+      opacity: 0.7;
+    }
+
+    .choice-icon {
+      font-size: 1.3rem;
+    }
+
+    /* Feedback Modal popup overlay */
+    .feedback-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.92);
+      border-radius: var(--radius-lg);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 24px;
+      text-align: center;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .feedback-icon {
+      font-size: 4rem;
+      animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0); }
+      70% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .feedback-title {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .feedback-title.success { color: var(--color-accent); }
+    .feedback-title.fail { color: var(--color-primary); }
+
+    .feedback-desc {
+      font-size: 1.1rem;
+      color: #4a5568;
+      max-width: 300px;
+      margin-bottom: 12px;
+    }
+
+    .feedback-btn {
+      width: auto;
+      min-width: 160px;
+    }
+
+    /* Finished/Result screen styling */
+    .result-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .result-screen.active {
+      display: flex;
+    }
+
+    .trophy-icon {
+      font-size: 5.5rem;
+      margin-bottom: 16px;
+      animation: bounce 2s infinite ease-in-out;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.05); }
+    }
+
+    .result-score-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .result-stars {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .result-stars .star-icon {
+      font-size: 3rem;
+    }
+
+    .result-message {
+      font-size: 1.2rem;
+      color: #4a5568;
+      margin-bottom: 30px;
+      max-width: 450px;
+      line-height: 1.5;
+    }
+
+    .restart-btn {
+      background: var(--color-primary);
+      box-shadow: 0 8px 16px rgba(255, 107, 107, 0.3);
+      width: auto;
+      min-width: 220px;
+    }
+
+    .restart-btn:hover {
+      background-color: var(--color-primary-hover);
+      box-shadow: 0 12px 20px rgba(255, 107, 107, 0.4);
+    }
+
+    /* Confetti Canvas overlays */
+    canvas#confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* SVG handle details */
+    .interactive-elements {
+      pointer-events: none; /* Make overlay elements click-through to allow dragging */
+    }
+
+    .drag-handle-interactive {
+      pointer-events: auto; /* Re-enable pointer events on the handle itself */
+      cursor: grab;
+      transition: stroke-width 0.15s ease, r 0.15s ease;
+    }
+
+    .drag-handle-interactive:hover {
+      r: 15;
+      stroke-width: 4;
+    }
+
+    .drag-handle-interactive:active {
+      cursor: grabbing;
+      r: 15;
+      stroke: #fff;
+    }
+
+    /* Protractor tick labels styling */
+    .protractor-text {
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* Hide the interactive UI handle when read only */
+    .readonly .drag-handle-interactive {
+      pointer-events: none;
+      cursor: default;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1><span class="logo-emoji">📐</span>Kutko</h1>
+    <div class="subtitle">Istraži i nauči kutove na zabavan način! Prilagođeno za male matematičare 🌟</div>
+    
+    <!-- Quick Settings Control Panel -->
+    <div class="quick-settings">
+      <label class="toggle-container" for="magnet-toggle" title="Privlači ručicu na točne važne kutove automatski">
+        <input type="checkbox" id="magnet-toggle" class="toggle-checkbox" checked>
+        <div class="toggle-switch"></div>
+        <span class="toggle-label">🧲 Lijepljenje za kutove</span>
+      </label>
+      
+      <label class="toggle-container" for="sound-toggle" title="Uključi ili isključi zvučne efekte">
+        <input type="checkbox" id="sound-toggle" class="toggle-checkbox" checked>
+        <div class="toggle-switch"></div>
+        <span class="toggle-label">🔊 Zvuk</span>
+      </label>
+    </div>
+  </header>
+
+  <!-- Segmented Controls / Mode Tab Switcher -->
+  <nav class="tab-nav" aria-label="Glavna navigacija">
+    <button id="tab-explore" class="tab-btn active" onclick="switchMode('explore')">
+      🔍 Istraži
+    </button>
+    <button id="tab-quiz" class="tab-btn" onclick="switchMode('quiz')">
+      🎮 Kviz
+    </button>
+  </nav>
+
+  <main>
+    <!-- CANVAS FOR CONFETTI ANIMATIONS -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- EXPLORE PANEL -->
+    <section id="panel-explore" class="panel active">
+      <!-- Left Card: SVG Visualizer -->
+      <article class="card">
+        <h2 class="card-title">Kutomjer</h2>
+        
+        <div class="visualizer-wrapper">
+          <div id="explore-value" class="angle-value-bubble">0°</div>
+          
+          <svg viewBox="0 0 300 300" id="protractor-svg-explore">
+            <!-- Protractor Background Base Circle -->
+            <circle cx="150" cy="150" r="122" class="protractor-base-circle" />
+            <circle cx="150" cy="150" r="120" fill="#ffffff" />
+            
+            <!-- Dynaimc Groups for ticks and labels generated by JS -->
+            <g id="ticks-explore"></g>
+            <g id="labels-explore" class="protractor-text"></g>
+            
+            <!-- Angle Wedge (Visual Area Sector) -->
+            <path id="angle-wedge-explore" fill="rgba(255, 107, 107, 0.22)" stroke="var(--color-primary)" stroke-width="3" d="M 150 150 L 270 150 Z" />
+            
+            <!-- Static Baseline Ray (East / 0 Degrees) -->
+            <line x1="150" y1="150" x2="270" y2="150" stroke="var(--color-dark)" stroke-width="4.5" stroke-linecap="round" />
+            
+            <!-- Moving Ray / Arm -->
+            <line id="moving-arm-explore" x1="150" y1="150" x2="270" y2="150" stroke="var(--color-primary)" stroke-width="4.5" stroke-linecap="round" />
+            
+            <!-- Center Pivot Point Dot -->
+            <circle cx="150" cy="150" r="7" fill="var(--color-dark)" />
+            
+            <!-- Draggable Interactive Handle -->
+            <g class="interactive-elements">
+              <circle id="handle-explore" cx="270" cy="150" r="12.5" fill="var(--color-primary)" stroke="#ffffff" stroke-width="3" class="drag-handle-interactive" />
+            </g>
+          </svg>
+        </div>
+      </article>
+
+      <!-- Right Card: Controls & Info -->
+      <article class="card">
+        <h2 class="card-title">Upravljanje i Znanje</h2>
+        
+        <div class="controls-wrapper">
+          <!-- Preset buttons for quick selection -->
+          <div class="preset-container">
+            <span class="preset-title">Brzi odabir kuta:</span>
+            <div class="preset-buttons">
+              <button class="preset-btn" data-angle="45" onclick="setAngleFromPreset(45)" title="Učitaj kut od 45 stupnjeva">
+                <span>45°</span>
+                <span class="label-name">Šiljasti</span>
+              </button>
+              <button class="preset-btn" data-angle="90" onclick="setAngleFromPreset(90)" title="Učitaj kut od 90 stupnjeva">
+                <span>90°</span>
+                <span class="label-name">Pravi</span>
+              </button>
+              <button class="preset-btn" data-angle="180" onclick="setAngleFromPreset(180)" title="Učitaj kut od 180 stupnjeva">
+                <span>180°</span>
+                <span class="label-name">Ispruženi</span>
+              </button>
+              <button class="preset-btn" data-angle="360" onclick="setAngleFromPreset(360)" title="Učitaj kut od 360 stupnjeva">
+                <span>360°</span>
+                <span class="label-name">Puni</span>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Inputs panel -->
+          <div class="inputs-container">
+            <div class="slider-row">
+              <div class="slider-header">
+                <span>Povuci klizač:</span>
+                <span id="slider-val-display" style="font-weight: 700;">0°</span>
+              </div>
+              <input type="range" id="angle-slider" class="slider-input" min="0" max="360" value="0" aria-label="Klizač za postavljanje kuta">
+            </div>
+            
+            <div class="number-row">
+              <span class="number-label">Upiši brojčano:</span>
+              <div class="number-input-wrapper">
+                <button class="number-btn" onclick="adjustNumberInput(-1)" aria-label="Smanji kut za 1 stupanj">-</button>
+                <input type="number" id="angle-number" class="number-input" min="0" max="360" value="0" aria-label="Unos kuta u stupnjevima">
+                <button class="number-btn" onclick="adjustNumberInput(1)" aria-label="Povećaj kut za 1 stupanj">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Angle Type Educational Info Card -->
+          <div id="education-card" class="info-card">
+            <div id="angle-badge" class="info-badge">Nulti kut</div>
+            <div id="angle-name" class="info-angle-name">Nulti kut</div>
+            <div id="angle-desc" class="info-desc">Ovo je početni položaj kuta. Dva kraka leže točno jedan na drugome.</div>
+            <div class="info-example">
+              <span id="angle-example-icon" class="info-example-icon">📏</span>
+              <span id="angle-example-text" class="info-example-text">Zatvorene škare ili kazaljke sata točno u 12 sati.</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- QUIZ PANEL -->
+    <section id="panel-quiz" class="panel">
+      <div class="quiz-layout">
+        <!-- Left Side: Interactive SVG Workspace for Quiz -->
+        <article class="card">
+          <h2 class="card-title">Kutomjer za Kviz</h2>
+          
+          <div class="visualizer-wrapper" id="quiz-visualizer-container">
+            <div id="quiz-value" class="angle-value-bubble">0°</div>
+            
+            <svg viewBox="0 0 300 300" id="protractor-svg-quiz">
+              <circle cx="150" cy="150" r="122" class="protractor-base-circle" />
+              <circle cx="150" cy="150" r="120" fill="#ffffff" />
+              
+              <g id="ticks-quiz"></g>
+              <g id="labels-quiz" class="protractor-text"></g>
+              
+              <path id="angle-wedge-quiz" fill="rgba(255, 107, 107, 0.22)" stroke="var(--color-primary)" stroke-width="3" d="M 150 150 L 270 150 Z" />
+              <line x1="150" y1="150" x2="270" y2="150" stroke="var(--color-dark)" stroke-width="4.5" stroke-linecap="round" />
+              <line id="moving-arm-quiz" x1="150" y1="150" x2="270" y2="150" stroke="var(--color-primary)" stroke-width="4.5" stroke-linecap="round" />
+              <circle cx="150" cy="150" r="7" fill="var(--color-dark)" />
+              
+              <g class="interactive-elements">
+                <circle id="handle-quiz" cx="270" cy="150" r="12.5" fill="var(--color-primary)" stroke="#ffffff" stroke-width="3" class="drag-handle-interactive" />
+              </g>
+            </svg>
+          </div>
+        </article>
+
+        <!-- Right Side: Question Card and Score -->
+        <article class="card quiz-card">
+          <!-- Quiz Overlay Card for Feedback (Correct/Wrong) -->
+          <div id="feedback-panel" class="feedback-overlay">
+            <div id="feedback-icon" class="feedback-icon">🎉</div>
+            <div id="feedback-title" class="feedback-title">Točno!</div>
+            <div id="feedback-desc" class="feedback-desc">Tako je, odlično obavljeno! Osvajaš zvjezdicu!</div>
+            <button id="feedback-next-btn" class="primary-btn feedback-btn" onclick="closeFeedbackAndContinue()">
+              Dalje ➔
+            </button>
+          </div>
+
+          <!-- Header with stars and progress -->
+          <div class="quiz-header">
+            <span id="quiz-progress" class="quiz-progress-text">Pitanje 1 od 5</span>
+            <div class="stars-container" id="stars-row">
+              <span class="star-icon">★</span>
+              <span class="star-icon">★</span>
+              <span class="star-icon">★</span>
+              <span class="star-icon">★</span>
+              <span class="star-icon">★</span>
+            </div>
+          </div>
+
+          <!-- Question Content Area -->
+          <div class="quiz-question-box">
+            <span id="quiz-question-num-tag" class="quiz-question-number">Pitanje 1</span>
+            <div id="quiz-question-text" class="quiz-question-text">
+              Namjesti kut na kutomjeru na točno <strong>90°</strong> (Pravi kut)
+            </div>
+          </div>
+
+          <!-- Multiple Choice Container (Only shown for MC questions) -->
+          <div id="quiz-choice-options" class="choice-container" style="display: none;">
+            <!-- Buttons dynamically generated by JS -->
+          </div>
+
+          <!-- Check Button (Only shown for angle adjustment questions) -->
+          <button id="quiz-check-btn" class="primary-btn" onclick="checkCurrentAnswer()">
+            Provjeri kut 🔍
+          </button>
+        </article>
+      </div>
+    </section>
+
+    <!-- FINAL RESULT SCREEN (replaces cards when quiz ends) -->
+    <section id="panel-result" class="card result-screen">
+      <div class="trophy-icon">🏆</div>
+      <h2 class="result-score-title">Sjajan rezultat!</h2>
+      <div class="result-stars" id="result-stars-row">
+        <!-- Rendered stars -->
+      </div>
+      <p id="result-text" class="result-message">
+        Osvojio/la si 5 od 5 zvjezdica! Ti si pravi mali matematičar i majstor za kutove!
+      </p>
+      <button class="primary-btn restart-btn" onclick="startQuiz()">
+        Igraj ponovno 🔄
+      </button>
+    </section>
+  </main>
+
+  <script>
+    /* ==========================================
+       GLOBAL STATE & SETTINGS
+       ========================================== */
+    const state = {
+      currentMode: 'explore', // 'explore' or 'quiz'
+      angle: 0,
+      magnetEnabled: true,
+      soundEnabled: true,
+      
+      // Drag state
+      isDragging: false,
+      activeSvg: null,
+      activeHandle: null,
+      activeWedge: null,
+      activeArm: null,
+      activeDisplay: null,
+      
+      // Quiz state
+      quizQuestions: [],
+      currentQuestionIndex: 0,
+      starsCollected: 0,
+      isQuizQuestionInteractive: true,
+      quizAnswersHistory: [] // To track which questions they got correct on the first try
+    };
+
+    // Constants
+    const CENTER = 150;
+    const RADIUS = 120;
+
+    // Angle categories with description & real-world examples (Croatian)
+    const angleCategories = [
+      {
+        min: 0,
+        max: 0,
+        name: "Nulti kut",
+        badgeClass: "#2b2d42",
+        desc: "Dva kraka leže točno jedan na drugome. Kut iznosi točno 0 stupnjeva.",
+        exampleIcon: "📏",
+        exampleText: "Zatvorene škare ili preklopljena kazaljka sata."
+      },
+      {
+        min: 1,
+        max: 89,
+        name: "Šiljasti kut",
+        badgeClass: "#ff9f43",
+        desc: "Kut koji je veći od 0°, a manji od 90°. Izgleda šiljasto i oštro poput vrha olovke!",
+        exampleIcon: "🍕",
+        exampleText: "Kut komada pizze, otvorene škare ili vrh strijele."
+      },
+      {
+        min: 90,
+        max: 90,
+        name: "Pravi kut",
+        badgeClass: "#00d2d3",
+        desc: "Kut od točno 90°. Krajevi ovog kuta stoje potpuno uspravno i ravno jedan na drugome, poput slova L.",
+        exampleIcon: "📖",
+        exampleText: "Kutovi na vratima, prozoru, bilježnici ili u kutiji."
+      },
+      {
+        min: 91,
+        max: 179,
+        name: "Tupi kut",
+        badgeClass: "#ff6b81",
+        desc: "Kut veći od 90°, ali manji od 180°. Ovaj kut je široko rastvoren, tup je i uopće nije oštar.",
+        exampleIcon: "💻",
+        exampleText: "Otvoreni laptop pod kojim radiš, ili krov kuće."
+      },
+      {
+        min: 180,
+        max: 180,
+        name: "Ispruženi kut",
+        badgeClass: "#5f27cd",
+        desc: "Kut od točno 180°. Krajevi leže na istoj ravnoj liniji, stvarajući ravnu cestu.",
+        exampleIcon: "📏",
+        exampleText: "Ravan položen ravnalo ili vodoravno raširene ruke."
+      },
+      {
+        min: 181,
+        max: 359,
+        name: "Izbočeni kut",
+        badgeClass: "#a55eea",
+        desc: "Kut koji je veći od 180°, a manji od 360°. To je ogroman kut koji se širi s vanjske strane krajeva.",
+        exampleIcon: "👾",
+        exampleText: "Otvorena usta Pac-Mana kada jede točkice ili vanjski dio sata."
+      },
+      {
+        min: 360,
+        max: 360,
+        name: "Puni kut",
+        badgeClass: "#ff5252",
+        desc: "Kut od točno 360°. Kada jedan krak napravi cijeli krug i ponovno se spoji s početkom. Obišli smo cijeli krug!",
+        exampleIcon: "⏰",
+        exampleText: "Cijeli krug na satu, okrugli kotač bicikla ili cijela okrugla torta."
+      }
+    ];
+
+    // Quiz Questions Database
+    const quizDatabase = [
+      {
+        type: "adjust",
+        questionText: "Namjesti kut na kutomjeru na točno <strong>90°</strong> (Pravi kut).",
+        targetAngle: 90,
+        explanation: "Pravi kut iznosi točno 90 stupnjeva, poput slova L."
+      },
+      {
+        type: "adjust",
+        questionText: "Namjesti kut na kutomjeru na <strong>180°</strong> (Ispruženi kut).",
+        targetAngle: 180,
+        explanation: "Ispruženi kut iznosi točno 180 stupnjeva, kada krakovi čine potpuno ravnu crtu."
+      },
+      {
+        type: "adjust",
+        questionText: "Zamisli komad pizze. Njegov kut je obično oko <strong>45°</strong>. Namjesti kut od 45°!",
+        targetAngle: 45,
+        explanation: "Kut od 45 stupnjeva je šiljasti kut, manji je od pravog kuta (90°)."
+      },
+      {
+        type: "adjust",
+        questionText: "Namjesti kutomjer tako da dobiješ puni krug, odnosno kut od <strong>360°</strong> (Puni kut).",
+        targetAngle: 360,
+        explanation: "Puni kut ima točno 360 stupnjeva i čini puni krug!"
+      },
+      {
+        type: "choice",
+        questionText: "Kako se zove kut koji iznosi točno <strong>90°</strong>?",
+        displayAngle: 90,
+        options: ["Šiljasti kut", "Pravi kut", "Tupi kut"],
+        correctIndex: 1,
+        explanation: "Uspravni kut od točno 90° zove se pravi kut."
+      },
+      {
+        type: "choice",
+        questionText: "Kut na slici iznosi <strong>120°</strong>. U koju skupinu spada taj kut?",
+        displayAngle: 120,
+        options: ["Šiljasti kut", "Tupi kut", "Izbočeni kut"],
+        correctIndex: 1,
+        explanation: "Budući da je 120° veće od 90°, a manje od 180°, to je tupi kut."
+      },
+      {
+        type: "choice",
+        questionText: "Kakav je kut koji iznosi <strong>45°</strong>?",
+        displayAngle: 45,
+        options: ["Šiljasti kut", "Tupi kut", "Ispruženi kut"],
+        correctIndex: 0,
+        explanation: "Kut od 45° je manji od 90°, što ga čini oštrim, odnosno šiljastim kutom."
+      },
+      {
+        type: "choice",
+        questionText: "Ako je kut veći od 180° i manji od 360° (kao na slici), kako ga zovemo?",
+        displayAngle: 250,
+        options: ["Tupi kut", "Puni kut", "Izbočeni kut"],
+        correctIndex: 2,
+        explanation: "Kutovi između 180° i 360° nazivaju se izbočeni kutovi."
+      },
+      {
+        type: "choice",
+        questionText: "Kako nazivamo kut koji iznosi točno <strong>180°</strong>?",
+        displayAngle: 180,
+        options: ["Puni kut", "Ispruženi kut", "Nulti kut"],
+        correctIndex: 1,
+        explanation: "Kut od 180° čiji krakovi čine ravnu crtu zove se ispruženi kut."
+      }
+    ];
+
+    /* ==========================================
+       SOUND ENGINE (Web Audio API)
+       ========================================== */
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSynthSound(type) {
+      if (!state.soundEnabled) return;
+      try {
+        initAudio();
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'tick') {
+          // Soft woody/pop click for snapping
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(650, now);
+          osc.frequency.exponentialRampToValueAtTime(150, now + 0.04);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.04);
+          osc.start(now);
+          osc.stop(now + 0.04);
+        } 
+        else if (type === 'success') {
+          // Triumphant cute chord (arpeggio C5 -> E5 -> G5 -> C6)
+          osc.type = 'triangle';
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.65);
+          
+          osc.frequency.setValueAtTime(523.25, now);       // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.08);  // E5
+          osc.frequency.setValueAtTime(783.99, now + 0.16);  // G5
+          osc.frequency.setValueAtTime(1046.50, now + 0.24); // C6
+          osc.start(now);
+          osc.stop(now + 0.65);
+        } 
+        else if (type === 'fail') {
+          // Sad falling spring sound
+          osc.type = 'sawtooth';
+          // Low-pass filter to make sawtooth soft and cartoonish
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(400, now);
+          osc.disconnect(gain);
+          osc.connect(filter);
+          filter.connect(gain);
+
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(120, now + 0.45);
+          
+          gain.gain.setValueAtTime(0.14, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+          osc.start(now);
+          osc.stop(now + 0.45);
+        } 
+        else if (type === 'complete') {
+          // Extra happy success melody for finishing the quiz
+          osc.type = 'sine';
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
+
+          const notes = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50];
+          notes.forEach((freq, idx) => {
+            osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+          });
+          
+          osc.start(now);
+          osc.stop(now + 1.0);
+        }
+      } catch (err) {
+        console.warn("Audio Context failed to play sound: ", err);
+      }
+    }
+
+    /* ==========================================
+       LIGHTWEIGHT CUSTOM CONFETTI SYSTEM
+       ========================================== */
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let animationFrameId = null;
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class ConfettiParticle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 8 + 6;
+        this.color = ['#ff6b6b', '#4dadf7', '#51cf66', '#fcc419', '#ae3ec9', '#ff922b'][Math.floor(Math.random() * 6)];
+        this.speedX = Math.random() * 6 - 3;
+        this.speedY = Math.random() * -10 - 5;
+        this.gravity = 0.35;
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = Math.random() * 8 - 4;
+        this.opacity = 1;
+      }
+      
+      update() {
+        this.speedY += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.rotation += this.rotationSpeed;
+        if (this.y > window.innerHeight) {
+          this.opacity -= 0.05;
+        }
+      }
+      
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation * Math.PI / 180);
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.color;
+        // Draw little rects/squares
+        ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+        ctx.restore();
+      }
+    }
+
+    function triggerConfetti() {
+      // Spawn particles from both left and right bottom corners
+      for (let i = 0; i < 60; i++) {
+        particles.push(new ConfettiParticle(50 + Math.random() * 50, window.innerHeight - 50));
+        particles.push(new ConfettiParticle(window.innerWidth - 100 + Math.random() * 50, window.innerHeight - 50));
+      }
+      
+      if (!animationFrameId) {
+        animateConfetti();
+      }
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      particles = particles.filter(p => p.opacity > 0);
+      
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      
+      if (particles.length > 0) {
+        animationFrameId = requestAnimationFrame(animateConfetti);
+      } else {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    /* ==========================================
+       PROTRACTOR GENERATION & RENDERING LOGIC
+       ========================================== */
+    function buildProtractorTicks(ticksGroupId, labelsGroupId) {
+      const ticksGroup = document.getElementById(ticksGroupId);
+      const labelsGroup = document.getElementById(labelsGroupId);
+      
+      ticksGroup.innerHTML = '';
+      labelsGroup.innerHTML = '';
+
+      for (let a = 0; a <= 360; a += 10) {
+        if (a === 360) continue; // 0 and 360 overlap, only draw once
+
+        const rad = -a * Math.PI / 180;
+        const isMajor = (a % 30 === 0);
+        const isFive = (a % 15 === 0);
+        
+        // Define tick lengths
+        let rStart = 113;
+        if (isMajor) rStart = 104;
+        else if (isFive) rStart = 109;
+        
+        const rEnd = 120;
+
+        const x1 = CENTER + rEnd * Math.cos(rad);
+        const y1 = CENTER + rEnd * Math.sin(rad);
+        const x2 = CENTER + rStart * Math.cos(rad);
+        const y2 = CENTER + rStart * Math.sin(rad);
+
+        // Draw line
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        
+        if (isMajor) {
+          line.setAttribute('stroke', 'var(--color-dark)');
+          line.setAttribute('stroke-width', '1.5');
+        } else {
+          line.setAttribute('stroke', '#a0aec0');
+          line.setAttribute('stroke-width', '1');
+        }
+        ticksGroup.appendChild(line);
+
+        // Draw text label on major tick marks
+        if (isMajor) {
+          const rLabel = 87;
+          const lx = CENTER + rLabel * Math.cos(rad);
+          const ly = CENTER + rLabel * Math.sin(rad);
+
+          const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          text.setAttribute('x', lx);
+          text.setAttribute('y', ly);
+          text.textContent = a === 0 ? "0/360" : a + "°";
+          text.setAttribute('text-anchor', 'middle');
+          text.setAttribute('dominant-baseline', 'central');
+          text.setAttribute('font-size', a === 0 ? '9px' : '10px');
+          text.setAttribute('font-weight', '700');
+          text.setAttribute('fill', '#4a5568');
+          text.setAttribute('class', 'protractor-text');
+          labelsGroup.appendChild(text);
+        }
+      }
+    }
+
+    // Initialize both protractors on load
+    buildProtractorTicks('ticks-explore', 'labels-explore');
+    buildProtractorTicks('ticks-quiz', 'labels-quiz');
+
+    /* ==========================================
+       SVG DRAG INTERACTION MATH
+       ========================================== */
+    function updateVisualizer(angleVal) {
+      // Cap angle between 0 and 360
+      const a = Math.max(0, Math.min(360, angleVal));
+      
+      // Calculate active visual elements based on mode
+      const isExplore = (state.currentMode === 'explore');
+      const handle = isExplore ? document.getElementById('handle-explore') : document.getElementById('handle-quiz');
+      const wedge = isExplore ? document.getElementById('angle-wedge-explore') : document.getElementById('angle-wedge-quiz');
+      const arm = isExplore ? document.getElementById('moving-arm-explore') : document.getElementById('moving-arm-quiz');
+      const bubble = isExplore ? document.getElementById('explore-value') : document.getElementById('quiz-value');
+
+      // Calculate end coordinates
+      // Negative because SVG y axis points downwards
+      const rad = -a * Math.PI / 180;
+      const x = CENTER + RADIUS * Math.cos(rad);
+      const y = CENTER + RADIUS * Math.sin(rad);
+
+      // 1. Move Handle
+      handle.setAttribute('cx', x);
+      handle.setAttribute('cy', y);
+
+      // 2. Move Moving Arm
+      arm.setAttribute('x2', x);
+      arm.setAttribute('y2', y);
+
+      // 3. Update Filled Wedge (Arc Segment)
+      let dPath = '';
+      if (a === 0) {
+        dPath = `M ${CENTER} ${CENTER} L ${CENTER + RADIUS} ${CENTER} Z`;
+      } else if (a === 360) {
+        // SVG arcs fail if start and end are identical. Render a circle instead or use 359.999
+        const radAlmostFull = -359.999 * Math.PI / 180;
+        const xAlmost = CENTER + RADIUS * Math.cos(radAlmostFull);
+        const yAlmost = CENTER + RADIUS * Math.sin(radAlmostFull);
+        dPath = `M ${CENTER} ${CENTER} L ${CENTER + RADIUS} ${CENTER} A ${RADIUS} ${RADIUS} 0 1 0 ${xAlmost} ${yAlmost} Z`;
+      } else {
+        const largeArcFlag = a > 180 ? 1 : 0;
+        // Sweep flag is 0 because standard counterclockwise angles decrease SVG y coordinates (going up)
+        dPath = `M ${CENTER} ${CENTER} L ${CENTER + RADIUS} ${CENTER} A ${RADIUS} ${RADIUS} 0 ${largeArcFlag} 0 ${x} ${y} Z`;
+      }
+      wedge.setAttribute('d', dPath);
+
+      // 4. Update text bubble overlay
+      bubble.textContent = `${a}°`;
+      
+      // Update dynamic inputs in explore mode
+      if (isExplore) {
+        document.getElementById('angle-slider').value = a;
+        document.getElementById('angle-number').value = a;
+        document.getElementById('slider-val-display').textContent = `${a}°`;
+        updateEducationCard(a);
+      }
+    }
+
+    let lastSnappedAngle = -1;
+
+    function handleDragMove(clientX, clientY) {
+      if (!state.isDragging) return;
+
+      const svg = state.activeSvg;
+      const rect = svg.getBoundingClientRect();
+      
+      // Find coordinates relative to SVG center
+      const svgCenterX = rect.left + rect.width / 2;
+      const svgCenterY = rect.top + rect.height / 2;
+      
+      const dx = clientX - svgCenterX;
+      const dy = clientY - svgCenterY;
+
+      // Invert dy because screen y goes downwards, standard math angle goes counterclockwise
+      let angleRad = Math.atan2(-dy, dx);
+      let angleDeg = angleRad * 180 / Math.PI;
+
+      if (angleDeg < 0) {
+        angleDeg += 360;
+      }
+
+      let finalAngle = Math.round(angleDeg);
+
+      // Magnet/Snapping logic
+      if (state.magnetEnabled) {
+        const snapTargets = [0, 45, 90, 135, 180, 225, 270, 315, 360];
+        const snapThreshold = 4.5; // snap range in degrees
+
+        for (const target of snapTargets) {
+          if (Math.abs(finalAngle - target) <= snapThreshold) {
+            finalAngle = target === 360 ? 360 : target;
+            
+            // Play a soft sound if we just snapped to a new target
+            if (lastSnappedAngle !== finalAngle) {
+              playSynthSound('tick');
+              lastSnappedAngle = finalAngle;
+            }
+            break;
+          }
+        }
+        
+        // Reset snap memory if we move out of snap zone
+        if (!snapTargets.includes(finalAngle)) {
+          lastSnappedAngle = -1;
+        }
+      }
+
+      state.angle = finalAngle;
+      updateVisualizer(finalAngle);
+    }
+
+    // Set up dragging event handlers
+    function setupDragListeners(svgId, handleId, wedgeId, armId, bubbleId) {
+      const svg = document.getElementById(svgId);
+      const handle = document.getElementById(handleId);
+
+      const startDrag = (e) => {
+        // Prevent default browser scrolling/selection
+        e.preventDefault();
+        
+        // Block dragging in quiz mode if it's currently a read-only multiple choice question
+        if (state.currentMode === 'quiz' && !state.isQuizQuestionInteractive) return;
+
+        state.isDragging = true;
+        state.activeSvg = svg;
+        state.activeHandle = handle;
+        
+        document.body.style.cursor = 'grabbing';
+      };
+
+      handle.addEventListener('mousedown', startDrag);
+      handle.addEventListener('touchstart', startDrag, { passive: false });
+
+      // Support clicking anywhere on the SVG to dial in an angle instantly
+      svg.addEventListener('mousedown', (e) => {
+        if (e.target !== handle) {
+          // Start drag and snap immediately to clicked position
+          startDrag(e);
+          const pointer = e.touches ? e.touches[0] : e;
+          handleDragMove(pointer.clientX, pointer.clientY);
+        }
+      });
+      svg.addEventListener('touchstart', (e) => {
+        if (e.target !== handle) {
+          startDrag(e);
+          const pointer = e.touches ? e.touches[0] : e;
+          handleDragMove(pointer.clientX, pointer.clientY);
+        }
+      }, { passive: false });
+    }
+
+    // Universal listeners on window object for drag safety
+    window.addEventListener('mousemove', (e) => {
+      if (state.isDragging) {
+        handleDragMove(e.clientX, e.clientY);
+      }
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (state.isDragging && e.touches.length > 0) {
+        handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: false });
+
+    const stopDrag = () => {
+      if (state.isDragging) {
+        state.isDragging = false;
+        document.body.style.cursor = 'default';
+        
+        // Snap number display to clean integer
+        updateVisualizer(state.angle);
+      }
+    };
+
+    window.addEventListener('mouseup', stopDrag);
+    window.addEventListener('touchend', stopDrag);
+
+    // Bind explore & quiz svg elements
+    setupDragListeners('protractor-svg-explore', 'handle-explore', 'angle-wedge-explore', 'moving-arm-explore', 'explore-value');
+    setupDragListeners('protractor-svg-quiz', 'handle-quiz', 'angle-wedge-quiz', 'moving-arm-quiz', 'quiz-value');
+
+    /* ==========================================
+       MANUAL CONTROLS IN EXPLORE MODE
+       ========================================== */
+    const slider = document.getElementById('angle-slider');
+    const numInput = document.getElementById('angle-number');
+
+    slider.addEventListener('input', (e) => {
+      state.angle = parseInt(e.target.value, 10);
+      updateVisualizer(state.angle);
+    });
+
+    numInput.addEventListener('input', (e) => {
+      let val = parseInt(e.target.value, 10);
+      if (isNaN(val)) val = 0;
+      if (val < 0) val = 0;
+      if (val > 360) val = 360;
+      state.angle = val;
+      updateVisualizer(state.angle);
+    });
+
+    function adjustNumberInput(amount) {
+      let val = state.angle + amount;
+      if (val < 0) val = 360;
+      if (val > 360) val = 0;
+      
+      state.angle = val;
+      updateVisualizer(state.angle);
+      playSynthSound('tick');
+    }
+
+    function setAngleFromPreset(presetVal) {
+      state.angle = presetVal;
+      updateVisualizer(presetVal);
+      playSynthSound('success');
+    }
+
+    // Settings listeners
+    const magnetToggle = document.getElementById('magnet-toggle');
+    const soundToggle = document.getElementById('sound-toggle');
+
+    magnetToggle.addEventListener('change', (e) => {
+      state.magnetEnabled = e.target.checked;
+    });
+
+    soundToggle.addEventListener('change', (e) => {
+      state.soundEnabled = e.target.checked;
+      if (state.soundEnabled) {
+        // Trigger a friendly chime to let user know audio works
+        playSynthSound('tick');
+      }
+    });
+
+    /* ==========================================
+       EDUCATIONAL INFORMATION LOGIC
+       ========================================== */
+    function updateEducationCard(angleVal) {
+      const category = angleCategories.find(c => angleVal >= c.min && angleVal <= c.max);
+      if (!category) return;
+
+      const badge = document.getElementById('angle-badge');
+      const name = document.getElementById('angle-name');
+      const desc = document.getElementById('angle-desc');
+      const icon = document.getElementById('angle-example-icon');
+      const text = document.getElementById('angle-example-text');
+
+      badge.textContent = category.name;
+      badge.style.backgroundColor = category.badgeClass;
+      name.textContent = category.name;
+      desc.textContent = category.desc;
+      icon.textContent = category.exampleIcon;
+      text.textContent = category.exampleText;
+    }
+
+    /* ==========================================
+       QUIZ SYSTEM
+       ========================================== */
+    function startQuiz() {
+      // 1. Reset Quiz State
+      state.currentQuestionIndex = 0;
+      state.starsCollected = 0;
+      state.quizAnswersHistory = [];
+      
+      // Hide result panel if visible
+      document.getElementById('panel-result').style.display = 'none';
+      document.getElementById('panel-explore').style.display = 'none';
+      
+      // Make sure quiz panel displays
+      const quizPanel = document.getElementById('panel-quiz');
+      quizPanel.classList.add('active');
+      quizPanel.style.display = 'grid';
+
+      // 2. Select 5 random questions from the database
+      const shuffled = [...quizDatabase].sort(() => 0.5 - Math.random());
+      state.quizQuestions = shuffled.slice(0, 5);
+
+      // 3. Reset stars display
+      updateStarsUI();
+
+      // 4. Load the first question
+      loadQuizQuestion();
+    }
+
+    function updateStarsUI() {
+      const starsRow = document.getElementById('stars-row');
+      const stars = starsRow.querySelectorAll('.star-icon');
+      
+      stars.forEach((star, index) => {
+        if (index < state.starsCollected) {
+          star.classList.add('filled');
+          star.textContent = '★';
+        } else {
+          star.classList.remove('filled');
+          star.textContent = '☆';
+        }
+      });
+    }
+
+    function loadQuizQuestion() {
+      const question = state.quizQuestions[state.currentQuestionIndex];
+      const progressText = document.getElementById('quiz-progress');
+      const numTag = document.getElementById('quiz-question-num-tag');
+      const questionText = document.getElementById('quiz-question-text');
+      const checkBtn = document.getElementById('quiz-check-btn');
+      const choiceContainer = document.getElementById('quiz-choice-options');
+      const protractorContainer = document.getElementById('quiz-visualizer-container');
+
+      // Update question text and progress headers
+      progressText.textContent = `Pitanje ${state.currentQuestionIndex + 1} od 5`;
+      numTag.textContent = `Pitanje ${state.currentQuestionIndex + 1}`;
+      questionText.innerHTML = question.questionText;
+
+      // Close feedback modal
+      document.getElementById('feedback-panel').style.display = 'none';
+
+      if (question.type === 'adjust') {
+        // ADJUST MODE QUESTION
+        state.isQuizQuestionInteractive = true;
+        state.angle = 0; // reset starting angle for quiz
+        updateVisualizer(0);
+
+        // Show Check button, hide choice options
+        checkBtn.style.display = 'block';
+        choiceContainer.style.display = 'none';
+        
+        // Remove read-only styles from protractor
+        protractorContainer.classList.remove('readonly');
+      } 
+      else if (question.type === 'choice') {
+        // MULTIPLE CHOICE QUESTION
+        state.isQuizQuestionInteractive = false;
+        
+        // Set static angle
+        state.angle = question.displayAngle;
+        updateVisualizer(question.displayAngle);
+
+        // Hide Check button, show choice options
+        checkBtn.style.display = 'none';
+        choiceContainer.style.display = 'flex';
+        
+        // Add read-only styles to protractor (disables drag handle)
+        protractorContainer.classList.add('readonly');
+
+        // Populate Choice Buttons
+        choiceContainer.innerHTML = '';
+        question.options.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'choice-btn';
+          btn.innerHTML = `<span>${opt}</span> <span class="choice-icon">❓</span>`;
+          btn.onclick = () => selectChoice(idx, btn);
+          choiceContainer.appendChild(btn);
+        });
+      }
+    }
+
+    function selectChoice(selectedIndex, buttonElement) {
+      const question = state.quizQuestions[state.currentQuestionIndex];
+      const buttons = document.querySelectorAll('.choice-btn');
+      
+      // Prevent clicking after correct choice
+      if (buttons[0].disabled) return;
+
+      if (selectedIndex === question.correctIndex) {
+        // CORRECT ANSWER
+        buttonElement.classList.add('correct');
+        buttonElement.querySelector('.choice-icon').textContent = '✅';
+        
+        // Disable all buttons
+        buttons.forEach(btn => btn.disabled = true);
+        
+        // Track history: check if answered correctly on first try
+        if (!state.quizAnswersHistory.includes(state.currentQuestionIndex)) {
+          state.starsCollected++;
+        }
+        
+        // Update scoreboard
+        updateStarsUI();
+        
+        // Show success overlay feedback
+        setTimeout(() => {
+          showFeedback(true, "Točno! 🎉", question.explanation);
+        }, 600);
+      } 
+      else {
+        // INCORRECT ANSWER
+        buttonElement.classList.add('incorrect');
+        buttonElement.querySelector('.choice-icon').textContent = '❌';
+        
+        // Log that they made a mistake on this question
+        if (!state.quizAnswersHistory.includes(state.currentQuestionIndex)) {
+          state.quizAnswersHistory.push(state.currentQuestionIndex);
+        }
+        
+        playSynthSound('fail');
+      }
+    }
+
+    function checkCurrentAnswer() {
+      const question = state.quizQuestions[state.currentQuestionIndex];
+      const diff = Math.abs(state.angle - question.targetAngle);
+
+      // Tolerance of 2 degrees
+      if (diff <= 2) {
+        // Correct
+        if (!state.quizAnswersHistory.includes(state.currentQuestionIndex)) {
+          state.starsCollected++;
+        }
+        updateStarsUI();
+        showFeedback(true, "Izvrsno! 🌟", question.explanation);
+      } else {
+        // Incorrect
+        if (!state.quizAnswersHistory.includes(state.currentQuestionIndex)) {
+          state.quizAnswersHistory.push(state.currentQuestionIndex);
+        }
+        
+        // Build helpful advice
+        let advice = `Tvoj kut iznosi <strong>${state.angle}°</strong>. `;
+        if (state.angle < question.targetAngle) {
+          advice += "Malo je premalen. Pokušaj ga još povećati! ➕";
+        } else {
+          advice += "Malo je prevelik. Pokušaj ga malo smanjiti! ➖";
+        }
+        
+        playSynthSound('fail');
+        
+        // Show incorrect popup modal (doesn't proceed, user gets to try again!)
+        showFeedback(false, "Skoro! Pokušaj ponovno 💡", advice);
+      }
+    }
+
+    function showFeedback(isSuccess, title, desc) {
+      const overlay = document.getElementById('feedback-panel');
+      const icon = document.getElementById('feedback-icon');
+      const titleEl = document.getElementById('feedback-title');
+      const descEl = document.getElementById('feedback-desc');
+      const nextBtn = document.getElementById('feedback-next-btn');
+
+      titleEl.textContent = title;
+      descEl.innerHTML = desc;
+
+      if (isSuccess) {
+        icon.textContent = "🎉";
+        titleEl.className = "feedback-title success";
+        nextBtn.textContent = state.currentQuestionIndex === 4 ? "Pogledaj rezultat 🏆" : "Dalje ➔";
+        nextBtn.onclick = closeFeedbackAndContinue;
+        
+        // Sound and Confetti
+        playSynthSound('success');
+        triggerConfetti();
+      } else {
+        icon.textContent = "💡";
+        titleEl.className = "feedback-title fail";
+        nextBtn.textContent = "Pokušaj ponovno 💪";
+        nextBtn.onclick = () => {
+          overlay.style.display = 'none';
+        };
+      }
+
+      overlay.style.display = 'flex';
+    }
+
+    function closeFeedbackAndContinue() {
+      document.getElementById('feedback-panel').style.display = 'none';
+      
+      state.currentQuestionIndex++;
+      if (state.currentQuestionIndex < 5) {
+        loadQuizQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      // Hide quiz panel, show result panel
+      document.getElementById('panel-quiz').classList.remove('active');
+      document.getElementById('panel-quiz').style.display = 'none';
+      
+      const resultPanel = document.getElementById('panel-result');
+      resultPanel.style.display = 'flex';
+      resultPanel.classList.add('active');
+
+      // Populate stars
+      const starsRow = document.getElementById('result-stars-row');
+      starsRow.innerHTML = '';
+      for (let i = 0; i < 5; i++) {
+        const star = document.createElement('span');
+        star.className = `star-icon ${i < state.starsCollected ? 'filled' : ''}`;
+        star.textContent = i < state.starsCollected ? '★' : '☆';
+        // Add staggered entry animation delay for stars
+        star.style.animation = `pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${i * 0.1}s forwards`;
+        starsRow.appendChild(star);
+      }
+
+      // Congratulatory message based on performance
+      const messageEl = document.getElementById('result-text');
+      if (state.starsCollected === 5) {
+        messageEl.innerHTML = `Osvojio/la si <strong>5 od 5 zvjezdica!</strong> 🏆<br>Savršeno riješeno! Ti si kralj ili kraljica kutova!`;
+        playSynthSound('complete');
+        // Double confetti for total victory!
+        triggerConfetti();
+        setTimeout(triggerConfetti, 500);
+      } else if (state.starsCollected >= 3) {
+        messageEl.innerHTML = `Osvojio/la si <strong>${state.starsCollected} od 5 zvjezdica!</strong> 🌟<br>Jako lijepo obavljeno! Skoro sve znaš, samo vježbaj i dalje!`;
+        playSynthSound('success');
+        triggerConfetti();
+      } else {
+        messageEl.innerHTML = `Osvojio/la si <strong>${state.starsCollected} od 5 zvjezdica.</strong> 💪<br>Dobar trud! Pokušaj ponovno, vježbom do savršenstva!`;
+        playSynthSound('fail');
+      }
+    }
+
+    /* ==========================================
+       TAB SWITCHING
+       ========================================== */
+    function switchMode(mode) {
+      if (state.currentMode === mode) return;
+
+      // 1. Update active tab styling
+      document.getElementById('tab-explore').classList.toggle('active', mode === 'explore');
+      document.getElementById('tab-quiz').classList.toggle('active', mode === 'quiz');
+
+      // 2. Hide all panels
+      document.getElementById('panel-explore').classList.remove('active');
+      document.getElementById('panel-quiz').classList.remove('active');
+      document.getElementById('panel-result').classList.remove('active');
+      
+      document.getElementById('panel-explore').style.display = 'none';
+      document.getElementById('panel-quiz').style.display = 'none';
+      document.getElementById('panel-result').style.display = 'none';
+
+      // 3. Show correct panel
+      state.currentMode = mode;
+      if (mode === 'explore') {
+        const explorePanel = document.getElementById('panel-explore');
+        explorePanel.classList.add('active');
+        explorePanel.style.display = 'grid';
+        // Reset and draw explore values
+        state.angle = parseInt(document.getElementById('angle-slider').value, 10);
+        updateVisualizer(state.angle);
+      } else {
+        // Start quiz game fresh
+        startQuiz();
+      }
+      
+      playSynthSound('tick');
+    }
+
+    // Set initial layout status
+    updateVisualizer(0);
+  </script>
+</body>
+</html>
